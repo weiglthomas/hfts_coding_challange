@@ -29,9 +29,26 @@ class IpRangesService(
     }
     
     private fun filterByRegion(prefixes: List<IpPrefix>, region: String): List<IpPrefix> {
+        if (region.equals("ALL", ignoreCase = true)) {
+            return prefixes
+        }
+        
+        val targetRegion = Region.fromString(region)
+            ?: throw IllegalArgumentException("Invalid region: $region. Valid regions: ${Region.values().joinToString { it.code }}, ALL")
+        
+        return prefixes.filter { prefix ->
+            targetRegion.scopePrefixes.any { scopePrefix ->
+                prefix.scope.startsWith(scopePrefix, ignoreCase = true)
+            }
+        }
     }
     
     private fun filterByIpVersion(prefixes: List<IpPrefix>, ipVersion: String?): List<String> {
+        return when (ipVersion?.uppercase()) {
+            "IPV4" -> prefixes.mapNotNull { it.ipv4Prefix }
+            "IPV6" -> prefixes.mapNotNull { it.ipv6Prefix }
+            null -> prefixes.flatMap { listOfNotNull(it.ipv4Prefix, it.ipv6Prefix) }
+            else -> throw IllegalArgumentException("Invalid IP version: $ipVersion. Valid values: IPv4, IPv6")
+        }
     }
-    
 }
