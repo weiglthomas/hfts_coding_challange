@@ -5,6 +5,7 @@ import com.example.gcpipranges.model.IpPrefix
 import com.example.gcpipranges.model.Region
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
@@ -20,6 +21,7 @@ class IpRangesService(
         return filterByIpVersion(filteredByRegion, ipVersion)
     }
     
+    @Cacheable(value = ["gcp-ip-ranges"], key = "#result.syncToken")
     private suspend fun fetchGcpData(): GcpResponse {
         return webClient.get()
             .uri(gcpUrl)

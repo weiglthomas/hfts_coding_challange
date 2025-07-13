@@ -216,9 +216,12 @@ class IpRangesServiceTest {
         }
     }
 
-        // Helper methods
+    // Helper methods
     private fun createMockResponse(prefixes: List<IpPrefix>): MockResponse {
-        val gcpResponse = GcpResponse(prefixes = prefixes)
+        val gcpResponse = GcpResponse(
+            syncToken = "1752372728076",
+            prefixes = prefixes
+        )
         return MockResponse()
             .setBody(objectMapper.writeValueAsString(gcpResponse))
             .addHeader("Content-Type", "application/json")
