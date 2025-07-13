@@ -14,10 +14,7 @@ class IpRangesController(private val ipRangesService: IpRangesService) {
     
     @GetMapping(produces = [MediaType.TEXT_PLAIN_VALUE])
     suspend fun getIpRanges(
-        @RequestParam(
-            name = ApiConstants.Parameters.REGION,
-            defaultValue = ApiConstants.DefaultValues.DEFAULT_REGION
-        ) region: String,
+        @RequestParam(name = ApiConstants.Parameters.REGION) region: String,
         @RequestParam(
             name = ApiConstants.Parameters.IP_VERSION,
             required = false

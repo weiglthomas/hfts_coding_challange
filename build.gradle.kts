@@ -32,6 +32,7 @@ dependencies {
 	testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 	testImplementation("io.mockk:mockk:1.13.8")
 	testImplementation("com.ninja-squad:springmockk:4.0.2")
+	testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

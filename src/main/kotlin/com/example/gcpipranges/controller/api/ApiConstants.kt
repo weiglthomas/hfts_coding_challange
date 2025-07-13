@@ -10,7 +10,4 @@ object ApiConstants {
         const val IP_VERSION = "ipVersion"
     }
     
-    object DefaultValues {
-        const val DEFAULT_REGION = "ALL"
-    }
 }

@@ -29,12 +29,8 @@ class IpRangesService(
     }
     
     private fun filterByRegion(prefixes: List<IpPrefix>, region: String): List<IpPrefix> {
-        if (region.equals("ALL", ignoreCase = true)) {
-            return prefixes
-        }
-        
         val targetRegion = Region.fromString(region)
-            ?: throw IllegalArgumentException("Invalid region: $region. Valid regions: ${Region.values().joinToString { it.code }}, ALL")
+            ?: throw IllegalArgumentException("Invalid region: $region. Valid regions: ${Region.values().joinToString { it.code }}")
         
         return prefixes.filter { prefix ->
             targetRegion.scopePrefixes.any { scopePrefix ->
