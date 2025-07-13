@@ -50,18 +50,6 @@ class IpRangesServiceTest {
         )
     }
     
-    // Helper methods
-    private fun createMockResponse(prefixes: List<IpPrefix>): MockResponse {
-        val gcpResponse = GcpResponse(prefixes = prefixes)
-        return MockResponse()
-            .setBody(objectMapper.writeValueAsString(gcpResponse))
-            .addHeader("Content-Type", "application/json")
-    }
-    
-    private fun enqueueMockResponse(prefixes: List<IpPrefix>) {
-        mockWebServer.enqueue(createMockResponse(prefixes))
-    }
-    
     @BeforeEach
     fun setUp() {
         mockWebServer = MockWebServer()
@@ -185,11 +173,10 @@ class IpRangesServiceTest {
         val result = ipRangesService.getIpRanges("EU", null)
         
         // Then
-        assertEquals(1, result.size) // 1 EU-Adresse in MIXED_PREFIXES
+        assertEquals(1, result.size) // 1 EU-adress in MIXED_PREFIXES
         assertTrue(result.contains("192.168.1.0/24"))
     }
     
-    // Parametrisierte Tests
     @ParameterizedTest
     @ValueSource(strings = ["EU", "US", "AS", "NA", "SA", "ME", "AF", "AUS"])
     fun `should handle different regions without errors`(region: String) = runTest {
@@ -199,13 +186,21 @@ class IpRangesServiceTest {
         // When
         val result = ipRangesService.getIpRanges(region, null)
         
-        // Then - Nur testen, dass der Service erfolgreich aufgerufen wird
-        // Ergebnis kann leer oder gefüllt sein, je nach Region
+        // Then
+        when (region) {
+            "EU" -> assertTrue(result.isNotEmpty())
+            "US" -> assertTrue(result.isNotEmpty())
+            "AUS" -> assertTrue(result.isNotEmpty())
+            "AF" -> assertTrue(result.isNotEmpty())
+            "ME" -> assertTrue(result.isNotEmpty())
+            "AS" -> assertTrue(result.isNotEmpty())
+            else -> {}
+        }
     }
     
     @ParameterizedTest
     @ValueSource(strings = ["IPv4", "IPv6"])
-    fun `should filter by different IP versions using helper methods`(ipVersion: String) = runTest {
+    fun `should filter by different IP versions`(ipVersion: String) = runTest {
         // Given
         enqueueMockResponse(MIXED_PREFIXES)
         
@@ -214,11 +209,22 @@ class IpRangesServiceTest {
         
         // Then
         if (ipVersion == "IPv4") {
-            assertEquals(1, result.size) // 1 IPv4-Adress for EU in MIXED_PREFIXES
+            assertEquals(1, result.size) // 1 IPv4-adress for EU in MIXED_PREFIXES
             assertTrue(result.all { !it.contains(":") })
         } else {
             assertEquals(0, result.size) // 0 IPv6-adresses for EU in MIXED_PREFIXES
         }
     }
+
+        // Helper methods
+    private fun createMockResponse(prefixes: List<IpPrefix>): MockResponse {
+        val gcpResponse = GcpResponse(prefixes = prefixes)
+        return MockResponse()
+            .setBody(objectMapper.writeValueAsString(gcpResponse))
+            .addHeader("Content-Type", "application/json")
+    }
     
+    private fun enqueueMockResponse(prefixes: List<IpPrefix>) {
+        mockWebServer.enqueue(createMockResponse(prefixes))
+    }
 }
