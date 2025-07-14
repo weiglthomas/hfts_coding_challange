@@ -126,7 +126,7 @@ class IpRangesServiceTest {
         val result = ipRangesService.getIpRanges("EU", null)
         
         // Then
-        assertEquals(1, result.size) // 1 EU-adress in MIXED_PREFIXES
+        assertEquals(1, result.size) // 1 EU-address in MIXED_PREFIXES
         assertTrue(result.contains("192.168.1.0/24"))
     }
     
@@ -207,10 +207,10 @@ class IpRangesServiceTest {
         
         // Then
         if (ipVersion == "IPv4") {
-            assertEquals(1, result.size) // 1 IPv4-adress for EU in MIXED_PREFIXES
+            assertEquals(1, result.size) // 1 IPv4-address for EU in MIXED_PREFIXES
             assertTrue(result.all { !it.contains(":") })
         } else {
-            assertEquals(0, result.size) // 0 IPv6-adresses for EU in MIXED_PREFIXES
+            assertEquals(0, result.size) // 0 IPv6-addresses for EU in MIXED_PREFIXES
         }
     }
 
