@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientException
 
 @Service
 class IpRangesService(
@@ -23,11 +24,15 @@ class IpRangesService(
     
     @Cacheable(value = ["gcp-ip-ranges"], key = "#result.syncToken")
     private suspend fun fetchGcpData(): GcpResponse {
-        return webClient.get()
-            .uri(gcpUrl)
-            .retrieve()
-            .bodyToMono(GcpResponse::class.java)
-            .awaitSingle()
+        return try {
+            webClient.get()
+                .uri(gcpUrl)
+                .retrieve()
+                .bodyToMono(GcpResponse::class.java)
+                .awaitSingle()
+        } catch (ex: WebClientException) {
+            throw ex
+        }
     }
     
     private fun filterByRegion(prefixes: List<IpPrefix>, region: String): List<IpPrefix> {

@@ -4,7 +4,7 @@ enum class Region(val code: String, val scopePrefixes: List<String>) {
     EU("EU", listOf("europe-")),
     US("US", listOf("us-")),
     ME("ME", listOf("me-")),
-    NA("NA", listOf("northamerica-", "us-")),
+    NA("NA", listOf("northamerica-")),
     SA("SA", listOf("southamerica-")),
     AS("AS", listOf("asia-")),
     AF("AF", listOf("africa-")),

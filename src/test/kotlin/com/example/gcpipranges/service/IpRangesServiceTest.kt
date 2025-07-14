@@ -15,6 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -115,6 +116,19 @@ class IpRangesServiceTest {
         assertTrue(result.contains("2001:db8::/32"))
         assertTrue(result.contains("2001:db9::/32"))
     }
+
+        @Test
+    fun `should handle mixed IPv4 and IPv6 prefixes`() = runTest {
+        // Given
+        enqueueMockResponse(MIXED_PREFIXES)
+        
+        // When
+        val result = ipRangesService.getIpRanges("EU", null)
+        
+        // Then
+        assertEquals(1, result.size) // 1 EU-adress in MIXED_PREFIXES
+        assertTrue(result.contains("192.168.1.0/24"))
+    }
     
     @Test
     fun `should throw exception for invalid region`() = runTest {
@@ -137,6 +151,17 @@ class IpRangesServiceTest {
             ipRangesService.getIpRanges("EU", "INVALID")
         }
     }
+    
+    @Test
+    fun `should handle WebClient exception`() = runTest {
+        // Given
+        mockWebServer.enqueue(MockResponse().setResponseCode(500))
+        
+        // When & Then
+        assertThrows<WebClientException> {
+            ipRangesService.getIpRanges("EU", null)
+        }
+    }
 
         @Test
     fun `should handle empty prefixes list`() = runTest {
@@ -148,19 +173,6 @@ class IpRangesServiceTest {
         
         // Then
         assertTrue(result.isEmpty())
-    }
-    
-    @Test
-    fun `should handle mixed IPv4 and IPv6 prefixes`() = runTest {
-        // Given
-        enqueueMockResponse(MIXED_PREFIXES)
-        
-        // When
-        val result = ipRangesService.getIpRanges("EU", null)
-        
-        // Then
-        assertEquals(1, result.size) // 1 EU-adress in MIXED_PREFIXES
-        assertTrue(result.contains("192.168.1.0/24"))
     }
     
     @ParameterizedTest
