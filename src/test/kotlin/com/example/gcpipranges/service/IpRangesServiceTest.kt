@@ -75,20 +75,6 @@ class IpRangesServiceTest {
     }
     
     @Test
-    fun `should return EU IP ranges when region is EU`() = runTest {
-        // Given
-        enqueueMockResponse(EU_TEST_PREFIXES)
-        
-        // When
-        val result = ipRangesService.getIpRanges("EU", null)
-        
-        // Then
-        assertEquals(2, result.size)
-        assertTrue(result.contains("192.168.1.0/24"))
-        assertTrue(result.contains("172.16.0.0/12"))
-    }
-    
-    @Test
     fun `should filter by EU region`() = runTest {
         // Given
         enqueueMockResponse(EU_TEST_PREFIXES)

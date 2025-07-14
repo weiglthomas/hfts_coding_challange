@@ -31,7 +31,7 @@ docker build -t gcp-ip-ranges-api .
 docker run -d --name gcp-ip-api -p 8080:8080 gcp-ip-ranges-api
 ```
 
-### Curl-Tests for running Container or local Start
+### Curl-Tests for running Container or local start
 ```bash
 # Asia all IP versions
 curl -s "http://localhost:8080/api/ip-ranges?region=AS" | head -5
